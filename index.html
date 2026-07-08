@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>BAIDABOYS27 CHUG WHEEL</title>
+  <style>
+    :root{
+      --bg:#060712; --hot:#ff2d55; --cyan:#00f5ff; --gold:#ffd166; --white:#fff;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 20%,#20204d 0%,#090a18 38%,#02030a 100%);font-family:Impact,Arial Black,system-ui,sans-serif;color:white;}
+    body.shake{animation:shake .12s infinite linear}
+    @keyframes shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(3px,-2px) rotate(.3deg)}50%{transform:translate(-3px,2px) rotate(-.3deg)}75%{transform:translate(2px,3px) rotate(.2deg)}100%{transform:translate(0,0) rotate(0)}}
+    .brand{position:fixed;top:14px;right:16px;z-index:20;font:900 13px/1 Arial,sans-serif;letter-spacing:2px;color:#fff;text-shadow:0 0 12px var(--cyan);opacity:.9}
+    .wrap{position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:38px 14px 26px;}
+    h1{margin:0 0 6px;font-size:clamp(46px,15vw,118px);letter-spacing:4px;text-align:center;text-shadow:0 0 10px #fff,0 0 24px var(--hot),0 0 46px var(--hot);animation:pulse .62s infinite alternate ease-in-out;}
+    @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.055)}}
+    .sub{font:800 13px/1.2 Arial,sans-serif;letter-spacing:3px;color:#ffe8ef;text-shadow:0 0 10px #000;margin-bottom:10px;text-align:center}
+    .game{position:relative;width:min(88vw,540px);height:min(88vw,540px);display:grid;place-items:center;filter:drop-shadow(0 0 30px rgba(0,245,255,.35));}
+    canvas{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 7px rgba(255,255,255,.12),0 0 36px rgba(255,45,85,.55);background:#111;}
+    .hub{position:absolute;width:86px;height:86px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ffd166 45%,#ff2d55 100%);display:grid;place-items:center;color:#141414;font-size:38px;box-shadow:0 0 28px rgba(255,209,102,.8);z-index:3}
+    .pointer{position:absolute;z-index:4;width:0;height:0;border-left:21px solid transparent;border-right:21px solid transparent;border-top:50px solid #fff;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 18px var(--cyan));transform-origin:50% -220px;}
+    .p1{top:-12px;left:50%;transform:translateX(-50%)}
+    .p2{top:50%;right:-10px;transform:translateY(-50%) rotate(90deg);border-top-color:#ffd166;filter:drop-shadow(0 0 10px #ffd166) drop-shadow(0 0 18px var(--hot));}
+    .count{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;font-size:clamp(76px,28vw,190px);font-weight:1000;color:#fff;text-shadow:0 0 16px #fff,0 0 46px var(--hot);opacity:0;z-index:6}
+    .count.show{animation:countPop .45s ease forwards}@keyframes countPop{0%{opacity:0;transform:scale(.5)}25%,80%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.4)}}
+    .overlay{position:fixed;inset:0;display:grid;place-items:center;z-index:10;background:radial-gradient(circle,rgba(255,45,85,.32),rgba(0,0,0,.86));opacity:0;pointer-events:none;transition:.25s}
+    .overlay.on{opacity:1;pointer-events:auto}.winnerBox{text-align:center;padding:18px}.winnerTitle{font-size:clamp(48px,15vw,116px);line-height:.9;text-shadow:0 0 14px #fff,0 0 40px var(--hot);letter-spacing:4px}.names{margin-top:18px;font-size:clamp(34px,9.5vw,86px);line-height:1.02;color:#fff;text-shadow:0 0 14px var(--cyan),0 0 32px #000}.amp{font-size:clamp(32px,8vw,70px);color:var(--gold);text-shadow:0 0 20px var(--gold)}
+    button{border:0;border-radius:999px;padding:17px 28px;font:1000 22px/1 Arial,sans-serif;letter-spacing:1px;color:#091018;background:linear-gradient(90deg,#00f5ff,#ffd166,#ff2d55);box-shadow:0 0 26px rgba(0,245,255,.6);cursor:pointer;margin-top:14px;text-transform:uppercase}button:active{transform:scale(.96)}
+    .start{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#1d235a,#05050d 58%)}.startCard{text-align:center;padding:24px}.startCard .big{font-size:clamp(54px,17vw,130px);text-shadow:0 0 16px #fff,0 0 40px var(--hot)}.hint{font:700 14px Arial,sans-serif;opacity:.85;letter-spacing:1px;margin:10px 0 20px}.again{background:linear-gradient(90deg,#ffd166,#fff,#00f5ff);font-size:18px;margin-top:25px}
+    .flash{position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:screen;opacity:0}.flash.beat{animation:beat .18s ease}@keyframes beat{0%{opacity:.9;background:#fff}100%{opacity:0;background:transparent}}
+    .beer{position:fixed;top:-60px;font-size:34px;z-index:7;animation:fall linear forwards;pointer-events:none;text-shadow:0 0 10px #000}@keyframes fall{to{transform:translateY(115vh) rotate(720deg);opacity:.05}}
+    .confetti{position:fixed;width:10px;height:16px;top:-20px;z-index:9;animation:confetti linear forwards;pointer-events:none}@keyframes confetti{to{transform:translateY(110vh) rotate(900deg);opacity:.1}}
+    @media(max-height:720px){h1{font-size:46px}.game{width:min(70vw,400px);height:min(70vw,400px)}.sub{display:none}}
+  </style>
+</head>
+<body>
+  <div class="brand">BAIDABOYS27</div><div class="flash" id="flash"></div>
+  <div class="start" id="start"><div class="startCard"><div class="big">CHUG!!</div><div class="hint">Trykk for å starte hjulet og sangen</div><button id="startBtn">START CHUG</button></div></div>
+  <div class="wrap"><h1>CHUG!!</h1><div class="sub">TO PILER • TO PERSONER • DROPP ETTER 3 SEK</div><div class="game"><canvas id="wheel" width="900" height="900"></canvas><div class="pointer p1"></div><div class="pointer p2"></div><div class="hub">🍺</div><div class="count" id="count">3</div></div></div>
+  <div class="overlay" id="overlay"><div class="winnerBox"><div class="winnerTitle">🍺 CHUG! 🍺</div><div class="names"><div id="winner1"></div><div class="amp">&</div><div id="winner2"></div></div><button class="again" id="again">SPIN AGAIN</button></div></div>
+  <audio id="song" preload="auto" playsinline src="song.mp4"></audio>
+  <script>
+    const names = [
+      'Alexander Nikolai Pedersen','Noah Mimon Jakobsen','Luckas Kuraas Eivik','Andre Hagen Gullbransen','Marius Kvensjø','Phillip Ingvart Akselsen','Fredrik Mikkelsen','Kasper Einås Eidum','Niklas Nilsen','Gabriel Clason','Luca Matheo Edvardsen','Matheo Fakking Mulitmilardær','Bartek Molinski','Mathias Eidisen','Dennis Sandvik','Henrik Ingebritsen','Tobias Harlund','Håvard Baustad','Omar Mballow','Leon Tretvoll','Casper Barosen','Magnus Sommerseth'
+    ];
+    const canvas=document.getElementById('wheel'), ctx=canvas.getContext('2d'), audio=document.getElementById('song');
+    const start=document.getElementById('start'), startBtn=document.getElementById('startBtn'), overlay=document.getElementById('overlay'), again=document.getElementById('again'), countEl=document.getElementById('count'), flash=document.getElementById('flash');
+    let rot=0, spinning=false, anim=null; const N=names.length, seg=2*Math.PI/N;
+    const colors=['#ff2d55','#00f5ff','#ffd166','#8b5cf6','#22c55e','#fb7185','#38bdf8','#f97316'];
+    function draw(){
+      const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=W*.465; ctx.clearRect(0,0,W,H); ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
+      for(let i=0;i<N;i++){ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,i*seg,(i+1)*seg);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=3;ctx.stroke();
+        ctx.save();ctx.rotate(i*seg+seg/2);ctx.textAlign='right';ctx.fillStyle='#fff';ctx.shadowColor='#000';ctx.shadowBlur=8;ctx.font='900 24px Arial';let label=names[i].split(' ')[0]+' '+(names[i].split(' ')[1]||'');ctx.fillText(label,r-18,8);ctx.restore();}
+      ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.lineWidth=10;ctx.strokeStyle='rgba(255,255,255,.9)';ctx.stroke();ctx.restore();
+    }
+    function idxAtPointer(pointerAngle){ // pointerAngle: -90 top, 0 right, rad in screen coords
+      let a = (pointerAngle - rot) % (2*Math.PI); if(a<0)a+=2*Math.PI; return Math.floor(a/seg)%N;
+    }
+    function pickTwo(){ let a=Math.floor(Math.random()*N), b; do{b=Math.floor(Math.random()*N)}while(b===a); return [a,b]; }
+    function targetRotationFor(a,b){
+      // pointer1 top = -90deg, pointer2 right = 0deg. find rotation approx aligning a to top and b to right; prefer p1 exact, then adjust by adding full turns until p2 close enough visually via separate chosen result.
+      const p1=-Math.PI/2; const centerA=a*seg+seg/2; return p1 - centerA + Math.PI*2*5;
+    }
+    function showCount(n){countEl.textContent=n;countEl.classList.remove('show');void countEl.offsetWidth;countEl.classList.add('show')}
+    function beat(){flash.classList.remove('beat');void flash.offsetWidth;flash.classList.add('beat'); if(navigator.vibrate) navigator.vibrate(35)}
+    function beerRain(){for(let i=0;i<20;i++){let e=document.createElement('div');e.className='beer';e.textContent=['🍺','🍻','🔥','💥'][i%4];e.style.left=Math.random()*100+'vw';e.style.animationDuration=(1.5+Math.random()*1.5)+'s';e.style.animationDelay=(Math.random()*.25)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),3300)}}
+    function confetti(){for(let i=0;i<120;i++){let e=document.createElement('div');e.className='confetti';e.style.left=Math.random()*100+'vw';e.style.background=colors[i%colors.length];e.style.animationDuration=(1.5+Math.random()*2.5)+'s';e.style.animationDelay=(Math.random()*.45)+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),4300)}}
+    let beatTimer=null;
+    function startBeats(){clearInterval(beatTimer); beatTimer=setInterval(beat,360)}
+    function stopBeats(){clearInterval(beatTimer)}
+    function spin(){ if(spinning)return; spinning=true; overlay.classList.remove('on'); document.body.classList.remove('shake');
+      const [winnerA,winnerB]=pickTwo(); // results used exactly at 3 seconds
+      const begin=performance.now(), dur=3000, startRot=rot, endRot=startRot + targetRotationFor(winnerA,winnerB);
+      audio.pause(); audio.currentTime=0; audio.play().catch(()=>{}); startBeats(); showCount(3); setTimeout(()=>showCount(2),1000); setTimeout(()=>showCount(1),2000);
+      function frame(now){let t=Math.min(1,(now-begin)/dur); let ease=1-Math.pow(1-t,4); rot=startRot+(endRot-startRot)*ease; draw(); if(t<1){anim=requestAnimationFrame(frame)}else{finish(winnerA,winnerB)}}
+      anim=requestAnimationFrame(frame);
+    }
+    function finish(a,b){spinning=false; rot = rot%(Math.PI*2); draw(); stopBeats(); beat(); document.body.classList.add('shake'); beerRain(); confetti(); document.getElementById('winner1').textContent=names[a].toUpperCase(); document.getElementById('winner2').textContent=names[b].toUpperCase(); overlay.classList.add('on'); if(navigator.vibrate) navigator.vibrate([80,40,80,40,180]); setTimeout(()=>document.body.classList.remove('shake'),1300);}
+    startBtn.onclick=()=>{start.style.display='none'; spin()}; again.onclick=()=>spin(); draw();
+  </script>
+</body>
+</html>
