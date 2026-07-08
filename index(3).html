@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BAIDABOYS27 CHUG WHEEL</title>
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial Black,Impact,system-ui,sans-serif;background:#05050a;color:white}
+    body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 15%,#2c003f 0%,#0a0714 42%,#000 100%)}
+    .tag{position:fixed;top:14px;right:16px;z-index:30;font-size:13px;letter-spacing:2px;color:#fff;text-shadow:0 0 12px #ff2df7,0 0 22px #00f7ff;opacity:.95}
+    .app{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px;position:relative}
+    h1{margin:0;font-size:clamp(36px,13vw,96px);letter-spacing:3px;line-height:.9;text-shadow:0 0 10px #fff,0 0 25px #ff006a,0 0 45px #ff006a;animation:pulse 1s infinite alternate;text-align:center}
+    .subtitle{font-family:system-ui,sans-serif;font-weight:800;letter-spacing:2px;font-size:clamp(13px,3.5vw,18px);opacity:.9;margin-top:2px;text-align:center}
+    .wheels{display:flex;gap:18px;align-items:center;justify-content:center;width:100%;max-width:980px;margin-top:8px}
+    .wheelBox{position:relative;width:min(43vw,360px);height:min(43vw,360px);min-width:155px;min-height:155px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 22px rgba(0,247,255,.45))}
+    .pointer{position:absolute;top:-2px;left:50%;transform:translateX(-50%);z-index:10;width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:36px solid #fff;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #ff005d)}
+    .pointer:after{content:"";position:absolute;left:-9px;top:-34px;width:18px;height:18px;border-radius:50%;background:#ff005d;box-shadow:0 0 20px #ff005d}
+    canvas{width:100%;height:100%;border-radius:50%;background:#111;border:5px solid rgba(255,255,255,.9);box-shadow:inset 0 0 25px rgba(255,255,255,.35),0 0 40px rgba(255,0,110,.55)}
+    .wheelLabel{position:absolute;bottom:-26px;left:0;right:0;text-align:center;font-family:system-ui,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;color:#00f7ff;text-shadow:0 0 8px #00f7ff}
+    .button{margin-top:26px;border:0;border-radius:999px;padding:16px 28px;font-size:clamp(18px,5vw,34px);font-family:Arial Black,Impact,sans-serif;letter-spacing:2px;background:linear-gradient(135deg,#ff005d,#ffb000,#00f7ff);color:#fff;text-shadow:0 2px 4px #000;box-shadow:0 0 25px rgba(255,0,110,.7),0 0 45px rgba(0,247,255,.35);cursor:pointer;animation:buttonPulse .8s infinite alternate}
+    .countdown{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;font-size:clamp(120px,35vw,320px);color:#fff;text-shadow:0 0 18px #fff,0 0 50px #ff005d;background:rgba(0,0,0,.25)}
+    .result{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;background:radial-gradient(circle,#3a000d 0%,#0b0004 45%,#000 100%)}
+    .result .small{font-size:clamp(38px,13vw,120px);line-height:.85;text-shadow:0 0 14px #fff,0 0 40px #ff005d;animation:slam .45s ease-out both}
+    .names{margin-top:18px;display:flex;flex-direction:column;gap:10px;align-items:center}
+    .name{font-size:clamp(30px,8vw,82px);line-height:.95;text-transform:uppercase;text-shadow:0 0 12px #00f7ff,0 0 35px #00f7ff,0 5px 0 #000;animation:pop .5s ease-out both;max-width:95vw}
+    .and{font-size:clamp(24px,6vw,55px);color:#ffcc00;text-shadow:0 0 20px #ffcc00}
+    .again{margin-top:28px;border:2px solid white;background:rgba(255,255,255,.12);color:white;border-radius:999px;padding:12px 22px;font-size:18px;font-weight:900;letter-spacing:1px}
+    .flash{position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:0}
+    .activeFlash{animation:flash .18s infinite alternate}
+    .shake{animation:shake .09s infinite}
+    .confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:60;animation:fall 2.2s linear forwards}
+    @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.04)}}
+    @keyframes buttonPulse{from{transform:scale(1)}to{transform:scale(1.06)}}
+    @keyframes slam{0%{transform:scale(3) rotate(-6deg);opacity:0}70%{transform:scale(.9) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+    @keyframes pop{0%{transform:translateY(30px) scale(.5);opacity:0}80%{transform:translateY(-6px) scale(1.08);opacity:1}100%{transform:translateY(0) scale(1)}}
+    @keyframes flash{from{background:#ff005d;opacity:.65}to{background:#fff;opacity:.25}}
+    @keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(7px,-5px)}50%{transform:translate(-6px,5px)}75%{transform:translate(5px,4px)}100%{transform:translate(-4px,-3px)}}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.95}}
+    @media(max-width:700px){.wheels{gap:8px}.wheelBox{width:46vw;height:46vw}.pointer{border-left-width:13px;border-right-width:13px;border-top-width:28px}.button{margin-top:20px}.wheelLabel{font-size:10px;bottom:-22px}}
+  </style>
+</head>
+<body>
+  <div class="flash" id="flash"></div>
+  <div class="tag">BAIDABOYS27</div>
+  <audio id="song" src="song.mp4" preload="auto" playsinline></audio>
+
+  <main class="app" id="app">
+    <h1>CHUG!!</h1>
+    <div class="subtitle">TO Piler · TO Navn · 3 SEKUNDER</div>
+    <section class="wheels">
+      <div class="wheelBox"><div class="pointer"></div><canvas id="wheel1" width="700" height="700"></canvas><div class="wheelLabel">PIL 1</div></div>
+      <div class="wheelBox"><div class="pointer"></div><canvas id="wheel2" width="700" height="700"></canvas><div class="wheelLabel">PIL 2</div></div>
+    </section>
+    <button class="button" id="start">TRYKK FOR Å SPINNE</button>
+  </main>
+
+  <div class="countdown" id="countdown">3</div>
+
+  <section class="result" id="result">
+    <div class="small">🍺 CHUG!! 🍺</div>
+    <div class="names">
+      <div class="name" id="winner1"></div>
+      <div class="and">&</div>
+      <div class="name" id="winner2"></div>
+    </div>
+    <button class="again" onclick="location.reload()">SPIN AGAIN</button>
+  </section>
+
+<script>
+const names = [
+  "Alexander Nikolai Pedersen","Noah Mimon Jakobsen","Luckas Kuraas Eivik","Andre Hagen Gullbransen",
+  "Marius Kvensjø","Phillip Ingvart Akselsen","Fredrik Mikkelsen","Kasper Einås Eidum",
+  "Niklas Nilsen","Gabriel Clason","Luca Matheo Edvardsen","Matheo Fakking Mulitmilardær",
+  "Bartek Molinski","Mathias Eidisen","Dennis Sandvik","Henrik Ingebritsen","Tobias Harlund",
+  "Håvard Baustad","Omar Mballow","Leon Tretvoll","Casper Barosen","Magnus Sommerseth"
+];
+
+const colors = ["#ff005d","#00f7ff","#ffcc00","#8a2cff","#00ff87","#ff6b00","#ff3df2","#42ff00"];
+const canvases = [document.getElementById('wheel1'), document.getElementById('wheel2')];
+const ctxs = canvases.map(c => c.getContext('2d'));
+const rotations = [0,0];
+const slice = Math.PI * 2 / names.length;
+
+function drawWheel(ctx, rotation){
+  const w = ctx.canvas.width, h = ctx.canvas.height, cx=w/2, cy=h/2, r=w/2-12;
+  ctx.clearRect(0,0,w,h);
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(rotation);
+  for(let i=0;i<names.length;i++){
+    const a0 = -Math.PI/2 + i*slice;
+    const a1 = a0 + slice;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,a0,a1); ctx.closePath();
+    ctx.fillStyle = colors[i%colors.length]; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.save();
+    ctx.rotate(a0 + slice/2);
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff'; ctx.font = '900 21px Arial';
+    ctx.shadowColor = '#000'; ctx.shadowBlur = 8; ctx.lineWidth = 5;
+    let short = names[i].split(' ')[0] + ' ' + (names[i].split(' ')[1] || '');
+    ctx.strokeStyle = '#000'; ctx.strokeText(short, r-24, 0);
+    ctx.fillText(short, r-24, 0);
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(0,0,62,0,Math.PI*2); ctx.fillStyle='#05050a'; ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=5; ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='900 34px Impact'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('CHUG',0,0);
+  ctx.restore();
+}
+
+function pickTwo(){
+  let a = Math.floor(Math.random()*names.length), b;
+  do { b = Math.floor(Math.random()*names.length); } while(b === a);
+  return [a,b];
+}
+
+function targetRotationForIndex(index, extraSpins){
+  // Pointer is at top (-90deg). Segment center before rotation is -90 + index*slice + slice/2.
+  // To put this center under pointer: rotation = -(index*slice + slice/2) plus full spins.
+  return extraSpins*Math.PI*2 - (index*slice + slice/2);
+}
+
+let started = false;
+function startSpin(){
+  if(started) return; started = true;
+  const song = document.getElementById('song');
+  song.currentTime = 0;
+  song.volume = 1;
+  song.play().catch(()=>{});
+
+  const [winnerA, winnerB] = pickTwo();
+  const startRot = [rotations[0], rotations[1]];
+  const endRot = [targetRotationForIndex(winnerA, 7), targetRotationForIndex(winnerB, 8)];
+  const duration = 3000;
+  const startTime = performance.now();
+
+  document.getElementById('start').style.display='none';
+  showCountdown();
+  document.getElementById('flash').classList.add('activeFlash');
+
+  function animate(now){
+    const t = Math.min((now-startTime)/duration,1);
+    const eased = 1 - Math.pow(1-t, 4);
+    for(let i=0;i<2;i++){
+      rotations[i] = startRot[i] + (endRot[i]-startRot[i])*eased;
+      drawWheel(ctxs[i], rotations[i]);
+    }
+    if(t<1) requestAnimationFrame(animate);
+    else reveal(winnerA, winnerB);
+  }
+  requestAnimationFrame(animate);
+}
+
+function showCountdown(){
+  const cd = document.getElementById('countdown');
+  cd.style.display='flex';
+  cd.textContent='3';
+  setTimeout(()=>cd.textContent='2',1000);
+  setTimeout(()=>cd.textContent='1',2000);
+  setTimeout(()=>cd.style.display='none',2950);
+}
+
+function reveal(a,b){
+  document.getElementById('winner1').textContent = names[a];
+  document.getElementById('winner2').textContent = names[b];
+  document.getElementById('result').style.display='flex';
+  document.body.classList.add('shake');
+  launchConfetti();
+  if(navigator.vibrate) navigator.vibrate([200,80,200,80,400]);
+  setTimeout(()=>document.body.classList.remove('shake'),1600);
+}
+
+function launchConfetti(){
+  for(let i=0;i<120;i++){
+    const p = document.createElement('div');
+    p.className='confetti';
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay=(Math.random()*0.5)+'s';
+    p.style.transform='rotate('+Math.random()*360+'deg)';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),2800);
+  }
+}
+
+canvases.forEach((c,i)=>drawWheel(ctxs[i], rotations[i]));
+document.getElementById('start').addEventListener('click', startSpin);
+document.body.addEventListener('touchstart',()=>{}, {passive:true});
+</script>
+</body>
+</html>
